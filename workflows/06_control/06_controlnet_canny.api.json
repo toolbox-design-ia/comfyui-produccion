@@ -1,0 +1,138 @@
+{
+ "1": {
+  "class_type": "CheckpointLoaderSimple",
+  "inputs": {
+   "ckpt_name": "sd_xl_base_1.0.safetensors"
+  }
+ },
+ "2": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "text": "cinematic wide shot of a mountain valley at dusk, volumetric light, film still",
+   "clip": [
+    "1",
+    1
+   ]
+  }
+ },
+ "3": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "text": "text, watermark, logo, low quality, deformed",
+   "clip": [
+    "1",
+    1
+   ]
+  }
+ },
+ "4": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "mapa_canny_ejemplo.png"
+  }
+ },
+ "5": {
+  "class_type": "CannyEdgePreprocessor",
+  "inputs": {
+   "image": [
+    "4",
+    0
+   ],
+   "low_threshold": 100,
+   "high_threshold": 200,
+   "resolution": 1024
+  }
+ },
+ "6": {
+  "class_type": "ControlNetLoader",
+  "inputs": {
+   "control_net_name": "controlnet-canny-sdxl-1.0-fp16.safetensors"
+  }
+ },
+ "7": {
+  "class_type": "ControlNetApplyAdvanced",
+  "inputs": {
+   "positive": [
+    "2",
+    0
+   ],
+   "negative": [
+    "3",
+    0
+   ],
+   "control_net": [
+    "6",
+    0
+   ],
+   "image": [
+    "5",
+    0
+   ],
+   "strength": 0.8,
+   "start_percent": 0.0,
+   "end_percent": 1.0,
+   "vae": [
+    "1",
+    2
+   ]
+  }
+ },
+ "8": {
+  "class_type": "EmptyLatentImage",
+  "inputs": {
+   "width": 1024,
+   "height": 576,
+   "batch_size": 1
+  }
+ },
+ "9": {
+  "class_type": "KSampler",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "seed": 4923811,
+   "steps": 22,
+   "cfg": 6.5,
+   "sampler_name": "euler",
+   "scheduler": "normal",
+   "positive": [
+    "7",
+    0
+   ],
+   "negative": [
+    "7",
+    1
+   ],
+   "latent_image": [
+    "8",
+    0
+   ],
+   "denoise": 1.0
+  }
+ },
+ "10": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "9",
+    0
+   ],
+   "vae": [
+    "1",
+    2
+   ]
+  }
+ },
+ "11": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "filename_prefix": "06_controlnet"
+  }
+ }
+}

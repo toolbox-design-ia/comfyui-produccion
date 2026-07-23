@@ -1,0 +1,29 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "plate_ejemplo.png"
+  }
+ },
+ "2": {
+  "class_type": "DepthAnythingPreprocessor",
+  "inputs": {
+   "image": [
+    "1",
+    0
+   ],
+   "ckpt_name": "depth_anything_vitl14.pth",
+   "resolution": 1024
+  }
+ },
+ "3": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "2",
+    0
+   ],
+   "filename_prefix": "SH0170_depth"
+  }
+ }
+}

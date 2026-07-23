@@ -1,0 +1,1 @@
+Caps. 12-17 — capas auxiliares del shot SH0170 con los nombres exactos del capitulo 17: depth (DepthAnything), normales (BAE), clean plate (inpainting) y relight (img2img a denoise 0.5; el capitulo menciona tambien relighting neural dedicado). Se automatizan por frames con `../api/SH0170_api_runner.py`.

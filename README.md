@@ -33,8 +33,7 @@ workflow en ComfyUI y dónde colocar cada modelo.
 | 12-15. Integración con Nuke | `nuke/` |
 | 16-17. Proyectos finales | `workflows/16_17_proyectos/` |
 
-Los workflows se publican junto con el libro; cada uno se prueba en una
-instalación real de ComfyUI antes de subirlo.
+**Estado de pruebas.** Los 17 workflows estan validados grafo a grafo contra ComfyUI 0.21.1 (nodos, tipos y modelos presentes), y tres se ejecutaron de principio a fin como prueba de humo (SD 1.5 txt2img, upscale Real-ESRGAN y depth). Cada workflow existe en formato interfaz (`.json`) y API (`.api.json`).
 
 ## Licencia
 

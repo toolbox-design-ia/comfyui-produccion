@@ -1,0 +1,1 @@
+Imagenes sinteticas de ejemplo usadas por los workflows: plate, plate con mascara alfa (inpainting) y mapa de lineas (ControlNet). Copialas a la carpeta `input/` de tu ComfyUI o carga las tuyas en los nodos Load Image.
