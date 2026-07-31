@@ -39,12 +39,16 @@ python SH0170_api_runner.py ../nuke/SH0170_depth_v01.api.json \
 servidor como una ruta del disco: en ese segundo caso el script sube el
 archivo por `/upload/image` antes de encolar el frame.
 
-## Nota sobre EXR
+## Nodos de guardado
 
-Los workflows de este repositorio guardan con `SaveImage`, que escribe PNG
-de ocho bits. Para las capas de datos que los capítulos 13, 14 y 17
-describen —depth y normales en coma flotante— hay que sustituir ese nodo
-por `SaveEXR` del paquete `ComfyUI-HQ-Image-Save`, con el knob `tonemap`
-en `linear`. Los scripts de esta carpeta ya reescriben el
-`filename_prefix` de ambos nodos, así que el cambio no exige tocar el
-código.
+Los scripts reescriben el `filename_prefix` tanto de `SaveImage` como de
+`SaveEXR`, así que funcionan con los dos tipos de workflow sin cambios. Los
+cuatro workflows de `../nuke/` y `16_plate_hero` usan `SaveEXR` con `tonemap`
+en `linear`; los doce demostrativos usan `SaveImage`. El criterio está en
+`../POLITICA.md`.
+
+Con `filename_prefix` relativo, `SaveEXR` numera igual que `SaveImage`, con un
+contador (`_00001_`). Con una ruta absoluta usa en cambio la numeración de
+secuencia de producción (`nombre_v001.1001.exr`), gobernada por sus knobs
+`version`, `start_frame` y `frame_pad`. Y a diferencia de `SaveImage`, se
+niega a sobrescribir un archivo que ya existe.

@@ -85,13 +85,19 @@
   }
  },
  "8": {
-  "class_type": "SaveImage",
+  "class_type": "SaveEXR",
   "inputs": {
    "images": [
     "7",
     0
    ],
-   "filename_prefix": "SH0170_relight"
+   "filename_prefix": "SH0170_relight",
+   "tonemap": "linear",
+   "version": 1,
+   "start_frame": 1001,
+   "frame_pad": 4,
+   "save_workflow": "ui",
+   "create_path_if_missing": false
   }
  }
 }

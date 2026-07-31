@@ -25,16 +25,17 @@ workflow en ComfyUI y dónde colocar cada modelo.
 ```
 comfyui-produccion/
 ├── workflows/               Grafos por capítulo, en formato interfaz (.json) y API (.api.json)
-│   ├── 03_interfaz/         03_txt2img_basico
-│   ├── 05_modelos/          05_sd15, 05_sdxl, 05_flux_dev, 05_flux_schnell
-│   ├── 06_control/          06_img2img, 06_controlnet_canny
-│   ├── 07_loras/            07_lora_estilo, 07_inpainting, 07_outpainting
-│   ├── 08_upscaling/        08_upscale_esrgan, 08_hires_fix
-│   └── 16_17_proyectos/     16_plate_hero
-├── nuke/                    Capas auxiliares del shot SH0170: depth, normals, cleanplate, relight
+│   ├── 03_interfaz/
+│   ├── 05_modelos/
+│   ├── 06_control/
+│   ├── 07_loras/
+│   ├── 08_upscaling/
+│   └── 16_17_proyectos/
+├── nuke/                    Capas auxiliares del shot SH0170: depth, normales, clean plate y relight
 ├── api/                     Scripts de Python de los capítulos 10, 11 y 17
 ├── ejemplos/                Imágenes de entrada para reproducir los ejercicios
 ├── models/                  MODELOS.md: qué modelo usa cada workflow y dónde colocarlo
+├── POLITICA.md              Por qué unos workflows guardan en PNG y otros en EXR
 ├── requirements.txt
 ├── README.md
 └── LICENSE
@@ -44,35 +45,53 @@ Cada carpeta lleva su propio `README.md` con el detalle de sus archivos.
 
 ## Correspondencia capítulo → material
 
-| Capítulo | Carpeta | Archivos |
-| --- | --- | --- |
-| 3. La interfaz y el grafo | `workflows/03_interfaz/` | `03_txt2img_basico` |
-| 5. Los modelos de 2026 | `workflows/05_modelos/` | `05_sd15_txt2img`, `05_sdxl_txt2img`, `05_flux_dev_txt2img`, `05_flux_schnell_txt2img` |
-| 6. Control de la imagen | `workflows/06_control/` | `06_img2img`, `06_controlnet_canny` |
-| 7. LoRAs, inpainting y outpainting | `workflows/07_loras/` | `07_lora_estilo`, `07_inpainting`, `07_outpainting` |
-| 8. Upscaling a fondo | `workflows/08_upscaling/` | `08_upscale_esrgan`, `08_hires_fix` |
-| 10. La API de ComfyUI | `api/` | `comfy_api.py` |
-| 11. Batch y pipeline | `api/` | `batch_runner.py` |
-| 12-17. Integración con Nuke | `nuke/` | `SH0170_depth_v01`, `SH0170_normals_v01`, `SH0170_cleanplate_v01`, `SH0170_relight_v01` |
-| 16. Proyecto: del concept a la plate | `workflows/16_17_proyectos/` | `16_plate_hero` |
-| 17. Proyecto: un shot completo en Nuke | `api/`, `nuke/` | `SH0170_api_runner.py` + los cuatro workflows de `nuke/` |
+| Capítulo | Carpeta | Archivos | Salida |
+| --- | --- | --- | --- |
+| 3. La interfaz y el grafo | `workflows/03_interfaz/` | `03_txt2img_basico` | PNG |
+| 5. Los modelos de 2026 | `workflows/05_modelos/` | `05_sd15_txt2img`, `05_sdxl_txt2img`, `05_flux_dev_txt2img`, `05_flux_schnell_txt2img` | PNG |
+| 6. Control de la imagen | `workflows/06_control/` | `06_img2img`, `06_controlnet_canny` | PNG |
+| 7. LoRAs, inpainting y outpainting | `workflows/07_loras/` | `07_lora_estilo`, `07_inpainting`, `07_outpainting` | PNG |
+| 8. Upscaling a fondo | `workflows/08_upscaling/` | `08_upscale_esrgan`, `08_hires_fix` | PNG |
+| 10. La API de ComfyUI | `api/` | `comfy_api.py` | — |
+| 11. Batch y pipeline | `api/` | `batch_runner.py` | — |
+| 12-17. Integración con Nuke | `nuke/` | `SH0170_depth_v01`, `SH0170_normals_v01`, `SH0170_cleanplate_v01`, `SH0170_relight_v01` | **EXR** |
+| 16. Proyecto: del concept a la plate | `workflows/16_17_proyectos/` | `16_plate_hero` | **EXR** |
+| 17. Proyecto: un shot completo en Nuke | `api/`, `nuke/` | `SH0170_api_runner.py` + los cuatro workflows de `nuke/` | **EXR** |
 
 Los capítulos 1, 2, 4, 9, 13, 14 y 15 no traen workflow propio: exponen
 conceptos, procedimientos de instalación o criterios de composición que se
 aplican sobre los grafos de los demás capítulos.
 
+## Dos políticas de guardado, y por qué
+
+Los cinco workflows que alimentan el ida y vuelta con Nuke —las cuatro capas
+del shot SH0170 y la plate hero del capítulo 16— guardan con **`SaveEXR`** y
+el knob **`tonemap` en `linear`**. Son datos de escena: profundidad, normales,
+altas luces por encima de 1.0. Guardarlos en PNG de ocho bits recorta esos
+valores de forma irreversible, que es justo el error que el capítulo 13 enseña
+a evitar.
+
+Los doce restantes son ejercicios demostrativos —aprender la interfaz,
+comparar modelos, ilustrar un control— y guardan con **`SaveImage`** en PNG,
+que ahí es el formato correcto y no obliga a instalar nada extra.
+
+El razonamiento completo, con la tabla de cuál es cuál, está en
+[`POLITICA.md`](POLITICA.md).
+
+> **Dependencia de los workflows en EXR.** `SaveEXR` viene del paquete
+> [`ComfyUI-HQ-Image-Save`](https://github.com/spacepxl/ComfyUI-HQ-Image-Save).
+> Sin él instalado, esos cinco workflows cargan con el nodo de guardado en
+> rojo. Es el mismo procedimiento que el Anexo B describe para cualquier
+> custom node que falte.
+
 **Estado de pruebas.** Los 17 workflows están validados grafo a grafo contra
 ComfyUI 0.21.1 (nodos, tipos y modelos presentes), y tres se ejecutaron de
 principio a fin como prueba de humo (SD 1.5 txt2img, upscale Real-ESRGAN y
 depth). Cada workflow existe en formato interfaz (`.json`) y API
-(`.api.json`).
-
-**Salida en EXR.** Todos los workflows guardan con `SaveImage`, que escribe
-PNG de ocho bits. Los capítulos 13, 14 y 17 exigen coma flotante para las
-capas de datos y para el ida y vuelta con Nuke: para eso hay que sustituir
-ese nodo por `SaveEXR` del paquete `ComfyUI-HQ-Image-Save` y poner su knob
-`tonemap` en `linear`. Está explicado en `api/README.md` y desarrollado en
-el capítulo 13.
+(`.api.json`). La conversión de los cinco workflows a `SaveEXR` está validada
+a nivel de JSON —estructura, enlaces y coherencia entre los dos formatos—
+pero **no ejecutada**, porque `ComfyUI-HQ-Image-Save` no está instalado en la
+máquina de validación.
 
 ## Licencia
 

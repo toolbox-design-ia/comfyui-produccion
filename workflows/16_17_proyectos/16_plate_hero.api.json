@@ -214,13 +214,19 @@
   }
  },
  "17": {
-  "class_type": "SaveImage",
+  "class_type": "SaveEXR",
   "inputs": {
    "images": [
     "16",
     0
    ],
-   "filename_prefix": "seq010_sh020_env_plate_v001"
+   "filename_prefix": "seq010_sh020_env_plate_v001",
+   "tonemap": "linear",
+   "version": 1,
+   "start_frame": 1001,
+   "frame_pad": 4,
+   "save_workflow": "ui",
+   "create_path_if_missing": false
   }
  }
 }

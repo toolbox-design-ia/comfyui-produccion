@@ -720,14 +720,14 @@
   },
   {
    "id": 17,
-   "type": "SaveImage",
+   "type": "SaveEXR",
    "pos": [
     1680,
     340
    ],
    "size": [
     270,
-    120
+    250
    ],
    "flags": {},
    "order": 16,
@@ -741,10 +741,16 @@
    ],
    "outputs": [],
    "properties": {
-    "Node name for S&R": "SaveImage"
+    "Node name for S&R": "SaveEXR"
    },
    "widgets_values": [
-    "seq010_sh020_env_plate_v001"
+    "seq010_sh020_env_plate_v001",
+    "linear",
+    1,
+    1001,
+    4,
+    "ui",
+    false
    ]
   }
  ],

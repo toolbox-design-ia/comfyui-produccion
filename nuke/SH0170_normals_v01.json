@@ -82,14 +82,14 @@
   },
   {
    "id": 3,
-   "type": "SaveImage",
+   "type": "SaveEXR",
    "pos": [
     80,
     600
    ],
    "size": [
     270,
-    120
+    250
    ],
    "flags": {},
    "order": 2,
@@ -103,10 +103,16 @@
    ],
    "outputs": [],
    "properties": {
-    "Node name for S&R": "SaveImage"
+    "Node name for S&R": "SaveEXR"
    },
    "widgets_values": [
-    "SH0170_normals"
+    "SH0170_normals",
+    "linear",
+    1,
+    1001,
+    4,
+    "ui",
+    false
    ]
   }
  ],

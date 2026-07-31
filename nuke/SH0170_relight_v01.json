@@ -313,14 +313,14 @@
   },
   {
    "id": 8,
-   "type": "SaveImage",
+   "type": "SaveEXR",
    "pos": [
     720,
     340
    ],
    "size": [
     270,
-    120
+    250
    ],
    "flags": {},
    "order": 7,
@@ -334,10 +334,16 @@
    ],
    "outputs": [],
    "properties": {
-    "Node name for S&R": "SaveImage"
+    "Node name for S&R": "SaveEXR"
    },
    "widgets_values": [
-    "SH0170_relight"
+    "SH0170_relight",
+    "linear",
+    1,
+    1001,
+    4,
+    "ui",
+    false
    ]
   }
  ],
