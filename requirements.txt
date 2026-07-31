@@ -1,0 +1,4 @@
+# Dependencias de los scripts de api/ (capitulos 10, 11 y 17).
+# SH0170_api_runner.py usa solo la biblioteca estandar y no necesita nada.
+requests>=2.31
+websockets>=12.0

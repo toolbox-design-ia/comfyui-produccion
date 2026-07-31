@@ -8,10 +8,22 @@ workflow para reproducibilidad.
 import argparse
 import hashlib
 import json
+import mimetypes
+import os
 import time
 import urllib.request
+import uuid
+from pathlib import Path
 
 DEFAULT_HOST = "http://127.0.0.1:8188"
+
+# Nodos de guardado cuyo filename_prefix hay que reescribir por frame.
+# SaveImage escribe PNG de 8 bits; SaveEXR (ComfyUI-HQ-Image-Save) escribe
+# EXR en coma flotante y es el que exigen las capas de datos del capitulo 13.
+SAVE_NODES = ("SaveImage", "SaveEXR", "SaveEXRFrames")
+
+# Los distintos samplers nombran la semilla de forma diferente.
+SEED_KNOBS = ("seed", "noise_seed")
 
 
 def load_workflow(path: str) -> dict:
@@ -21,20 +33,58 @@ def load_workflow(path: str) -> dict:
 
 def find_nodes(workflow: dict, class_type: str) -> list[str]:
     return [nid for nid, node in workflow.items()
-            if node["class_type"] == class_type]
+            if node.get("class_type") == class_type]
+
+
+def upload_image(path: Path, host: str = DEFAULT_HOST) -> str:
+    """Sube el frame a input/ y devuelve el nombre que espera LoadImage.
+
+    LoadImage resuelve nombres contra la carpeta input/ del servidor: no
+    acepta rutas absolutas. Subir el archivo es ademas lo unico que
+    funciona cuando ComfyUI corre en otra maquina.
+    """
+    boundary = uuid.uuid4().hex
+    mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+    body = b"".join([
+        f"--{boundary}\r\n".encode(),
+        f'Content-Disposition: form-data; name="image"; filename="{path.name}"\r\n'.encode(),
+        f"Content-Type: {mime}\r\n\r\n".encode(),
+        path.read_bytes(), b"\r\n",
+        f"--{boundary}\r\n".encode(),
+        b'Content-Disposition: form-data; name="overwrite"\r\n\r\ntrue\r\n',
+        f"--{boundary}--\r\n".encode(),
+    ])
+    req = urllib.request.Request(
+        host + "/upload/image", data=body,
+        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
+    with urllib.request.urlopen(req) as response:
+        return json.load(response)["name"]
+
+
+def resolve_input(frame_in: str, host: str = DEFAULT_HOST) -> str:
+    """Si frame_in es un archivo del disco lo sube; si no, lo trata como
+    un nombre ya presente en la carpeta input/ del servidor."""
+    candidate = Path(frame_in)
+    if candidate.is_file():
+        return upload_image(candidate, host)
+    return frame_in
 
 
 def submit_frame(workflow: dict, frame_in: str, frame_out: str, seed: int,
                  host: str = DEFAULT_HOST) -> str:
     wf = json.loads(json.dumps(workflow))  # deep copy
     # Modificar nodos: ruta de entrada, prefijo de salida y semilla
+    image_name = resolve_input(frame_in, host)
     for nid in find_nodes(wf, "LoadImage"):
-        wf[nid]["inputs"]["image"] = frame_in
-    for nid in find_nodes(wf, "SaveImage"):
-        wf[nid]["inputs"]["filename_prefix"] = frame_out
-    for nid, node in wf.items():
-        if "seed" in node["inputs"]:
-            node["inputs"]["seed"] = seed
+        wf[nid]["inputs"]["image"] = image_name
+    for class_type in SAVE_NODES:
+        for nid in find_nodes(wf, class_type):
+            wf[nid]["inputs"]["filename_prefix"] = frame_out
+    for node in wf.values():
+        inputs = node.get("inputs", {})
+        for knob in SEED_KNOBS:
+            if knob in inputs:
+                inputs[knob] = seed
     req = urllib.request.Request(
         host + "/prompt", data=json.dumps({"prompt": wf}).encode(),
         headers={"Content-Type": "application/json"})
@@ -69,7 +119,8 @@ def main() -> None:
     parser.add_argument("workflow", help="ruta al .api.json del workflow")
     parser.add_argument("--frames", default="1-1", help="rango, ej. 1001-1050")
     parser.add_argument("--pattern", default="SH0170.%04d.png",
-                        help="patron del nombre de frame de entrada")
+                        help="patron del frame de entrada: nombre en input/ "
+                             "o ruta del disco, que se sube automaticamente")
     parser.add_argument("--out-prefix", default="SH0170_layer")
     parser.add_argument("--seed", type=int, default=4923811)
     parser.add_argument("--host", default=DEFAULT_HOST)
