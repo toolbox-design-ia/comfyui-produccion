@@ -8,3 +8,8 @@ datos de escena que vuelven a Nuke y no admiten el recorte a 0-1 del PNG de
 ocho bits. Requieren el paquete `ComfyUI-HQ-Image-Save` instalado en el
 servidor; sin el, el nodo de guardado aparece en rojo al cargar el workflow.
 El porque esta en `../POLITICA.md` y desarrollado en el capitulo 13.
+
+Los cuatro pasan la validacion de /prompt contra un ComfyUI real con
+HQ-Image-Save instalado. No se han ejecutado E2E con sus modelos porque la
+maquina de validacion solo pudo arrancar en modo CPU y el preprocesador de
+profundidad requiere CUDA.

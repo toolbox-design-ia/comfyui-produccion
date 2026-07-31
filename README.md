@@ -88,10 +88,21 @@ El razonamiento completo, con la tabla de cuál es cuál, está en
 ComfyUI 0.21.1 (nodos, tipos y modelos presentes), y tres se ejecutaron de
 principio a fin como prueba de humo (SD 1.5 txt2img, upscale Real-ESRGAN y
 depth). Cada workflow existe en formato interfaz (`.json`) y API
-(`.api.json`). La conversión de los cinco workflows a `SaveEXR` está validada
-a nivel de JSON —estructura, enlaces y coherencia entre los dos formatos—
-pero **no ejecutada**, porque `ComfyUI-HQ-Image-Save` no está instalado en la
-máquina de validación.
+(`.api.json`).
+
+Los cinco workflows convertidos a `SaveEXR` se validaron además **contra un
+ComfyUI real** con `ComfyUI-HQ-Image-Save` instalado: los cinco pasan la
+validación de `/prompt` sin un solo error de nodo, y las ocho entradas
+obligatorias de `SaveEXR` coinciden en nombre, orden, tipo y dominio con las
+que declara el servidor. Aparte, `SaveEXR` se ejecutó de principio a fin con
+`tonemap` en `linear` y en `sRGB`: ambos escriben un OpenEXR válido en coma
+flotante de 32 bits, y la diferencia entre los dos afecta al 100 % de los
+píxeles (media 0,22 sobre un rango de 0 a 1). Esa medición es la que sostiene
+la advertencia del capítulo 13.
+
+No se han ejecutado de extremo a extremo los cuatro workflows de `nuke/` con
+sus modelos: la validación se hizo en modo CPU y `DepthAnythingPreprocessor`
+requiere CUDA. Es una limitación del entorno de prueba, no de los workflows.
 
 ## Licencia
 

@@ -20,9 +20,14 @@ eso en PNG de ocho bits recorta los valores fuera del rango 0-1 de forma
 irreversible, que es exactamente el error que el capítulo 13 enseña a
 evitar. Dejarlos en PNG habría desmentido al libro con el archivo delante.
 
-El knob `tonemap` va en `linear` en los cinco. Su valor por defecto es
-`sRGB`, y con ese valor el nodo aplica una conversión de curva antes de
-escribir que deshace justo lo que se buscaba.
+El knob `tonemap` va en `linear` en los cinco, declarado explícitamente y no
+heredado del valor por defecto. Ese valor por defecto es `sRGB`, y con él el
+nodo aplica una conversión de curva antes de escribir que deshace justo lo que
+se buscaba. Medido sobre la misma imagen guardada de las dos formas: cambia el
+100 % de los píxeles, con una diferencia media de 0,22 sobre un rango de 0 a 1,
+y un gris medio de 0,314 sale como 0,080. El archivo sigue siendo un EXR válido
+en coma flotante de 32 bits, así que el error no se manifiesta hasta mucho más
+abajo en el pipeline.
 
 **Requisito:** estos cinco workflows necesitan el paquete
 [`ComfyUI-HQ-Image-Save`](https://github.com/spacepxl/ComfyUI-HQ-Image-Save),
