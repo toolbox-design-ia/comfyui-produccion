@@ -1,7 +1,7 @@
 # ComfyUI en producción — Material del libro
 
 Repositorio companion del libro **«ComfyUI en producción»**
-(Henry Ramírez Reyes, colección IA APLICADA A LA POSTPRODUCCIÓN, Studio35).
+(Henry Ramírez Reyes, colección IA APLICADA A LA POSTPRODUCCIÓN, Toolbox Design).
 
 Aquí viven los workflows `.json` de cada capítulo, los scripts de la API
 y la lista de modelos con sus enlaces de descarga. El Anexo A del libro
